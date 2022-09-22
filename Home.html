@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前端排序算法汇总</title>
+  <style>
+     ul {
+      list-style-type: none;
+     }
+
+     pre {
+       display: none;
+     }
+
+     button {
+      margin-bottom: 10px;
+     }
+  </style>
+</head>
+<body>
+  <ul id="main">
+    <li><h3>冒泡排序</h3>
+      <button class="show_btn" value="0">动图</button> <button class="code_btn" value="0">代码</button>
+      <img src="https://www.runoob.com/wp-content/uploads/2019/03/bubbleSort.gif" style="width: 100%; display: none;"/><br/>
+    </li>
+    <li><h3>选择排序</h3>
+      <button class="show_btn" value="1">动图</button> <button class="code_btn" value="1">代码</button>
+      <img src="https://www.runoob.com/wp-content/uploads/2019/03/selectionSort.gif" style="width: 100%; display: none;" /><br/>
+    </li>
+    <li><h3>插入排序</h3>
+      <button class="show_btn" value="2">动图</button> <button class="code_btn" value="2">代码</button>
+      <img src="https://www.runoob.com/wp-content/uploads/2019/03/insertionSort.gif" style="width: 100%; display: none;"/><br/>
+    </li>
+    <li><h3>归并排序</h3>
+      <button class="show_btn" value="3">动图</button> <button class="code_btn" value="3">代码</button>
+      <img src="https://www.runoob.com/wp-content/uploads/2019/03/mergeSort.gif" style="width: 100%; display: none;"/><br/>
+    </li>
+    <li><h3>堆排序</h3>
+      <button class="show_btn" value="4">动图</button> <button class="code_btn" value="4">代码</button>
+      <img src="https://www.runoob.com/wp-content/uploads/2019/03/heapSort.gif" style="width: 100%; display: none;"/><br/>
+    </li>
+    <li><h3>快速排序</h3>
+      <button class="show_btn" value="5">动图</button> <button class="code_btn" value="5">代码</button>
+      <img src="https://www.runoob.com/wp-content/uploads/2019/03/quickSort.gif" style="width: 100%; display: none;"/><br/>
+    </li>
+  </ul>
+  <script>
+    let arr = [3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48];
+    window.onload = function(){
+      bindShowAndHide();
+      showSortAnswer();
+    }
+    
+    // 统一绑定显示和隐藏动图功能
+    function bindShowAndHide (){
+      let dom = document.getElementById('main');
+      let imgArr = document.getElementsByTagName('img');
+      let preArr = document.getElementsByTagName('pre');
+      // 事件委托
+      dom.onclick = function(e){
+        if(e.target.className==='show_btn'){
+          imgArr[e.target.value].style['display'] = imgArr[e.target.value].style['display'] == 'block' ? 'none': 'block';
+        }else if(e.target.className==='code_btn'){
+          preArr[e.target.value].style['display'] = preArr[e.target.value].style['display'] == 'block' ? 'none': 'block';
+        }
+      }
+    }
+
+    // 显示排序后的排序结果
+    function showSortAnswer (){
+      let methodArr = ['BubbleSort','SelectSort','insertSort','mergeSort','heapSort','quickSort']
+      let domArr = document.getElementById('main').children;
+      for(let i = 0; i < domArr.length; i++){
+        domArr[i].innerHTML +=`排序结果：${eval(`${methodArr[i]}(arr)`).join(' ')}`;
+        if(i == 3){
+          domArr[i].innerHTML += `<pre>${eval('mergeSort')}<br/>${eval('merge')}</pre>`;
+        }else if(i == 4){
+          domArr[i].innerHTML += `<pre>${eval('heapify')}<br/>${eval('buildMaxHeap')}<br/>${eval('heapSort')}</pre>`;
+        }else if(i == 5){
+          domArr[i].innerHTML += `<pre>${eval('quickSort')}<br/>${eval('partition')}</pre>`;
+        }else{
+          domArr[i].innerHTML += `<pre>${eval(`${methodArr[i]}`)}</pre>`;
+        }
+      }
+    }
+
+    /*冒泡排序*/
+    function BubbleSort(args){
+      let arr  = [...args]
+      for(let i = 0; i < arr.length; i++ ){
+        for(let j = i + 1; j < arr.length; j++ ){
+          if(arr[i] > arr[j]){
+              [arr[i] , arr[j]] =  [arr[j] , arr[i]]
+          }
+        }
+      }
+      return arr;
+    }
+
+
+    /*选择排序*/
+    function SelectSort(args){
+      let arr = [...args];
+      for(let i = 0; i < arr.length; i++){
+        let index = i;
+        for(let j = i; j < arr.length; j++){
+          if(arr[j] < arr[index]){
+            index = j;
+          }
+        }
+        [arr[index] , arr[i]] = [arr[i] , arr[index]]
+      }
+      return arr;
+    }
+    
+
+    /*插入排序*/
+    function insertSort(args){
+      let arr = [...args];
+      let  preIndex , cur;
+      for(let i = 1; i < arr.length; i++){
+        preIndex = i - 1;
+        cur = arr[i];
+        while(preIndex >= 0 && arr[preIndex] > cur){
+          arr[preIndex + 1] = arr[preIndex];
+          preIndex --;
+        }
+        arr[preIndex + 1] = cur;
+      }
+      return arr;
+    }
+    
+
+    
+    /*归并排序*/
+    function mergeSort(arr){
+      let len = arr.length;
+      if(len < 2){
+        return arr;
+      }
+      let mid = Math.floor(len/2);
+      let left = arr.slice(0, mid);
+      let right = arr.slice(mid);
+      return merge(mergeSort(left), mergeSort(right));
+    }
+
+    function merge(left, right){
+      let res = [];
+      while(left.length && right.length){
+        if(left[0]<=right[0]){
+          res.push(left.shift());
+        }else{
+          res.push(right.shift());
+        }
+      }
+      if(left.length){
+        res = res.concat(left)
+      }else{
+        res = res.concat(right);
+      }
+      return res;
+    }
+
+
+    /*堆排序*/
+    let heap_len;
+    // 堆维护方法
+    function heapify(arr , i){
+      let left = 2 * i + 1;
+      let right = 2 * i + 2;
+      let largest  = i;
+      if(left < heap_len && arr[largest] < arr[left]){
+          largest = left;
+      }
+      if(right < heap_len && arr[largest] < arr[right]){
+        largest = right;
+      }
+      if(largest !== i){
+        [arr[largest] , arr[i]] = [arr[i] , arr[largest]];
+        heapify(arr, largest);
+      }
+    }
+    // 建大顶堆
+    function buildMaxHeap(arr){
+      heap_len = arr.length;
+      for(let i = Math.floor(heap_len / 2); i >= 0; i--){
+          heapify(arr, i);
+      }
+    }
+    // 堆排序
+    function heapSort(arr){
+      buildMaxHeap(arr);
+      for(let i = arr.length - 1;i > 0; i--){
+          [arr[i] , arr[0]] = [arr[0] , arr[i]];
+          heap_len --;
+          heapify(arr, 0);
+      }
+      return arr;
+    }
+
+
+    /*快速排序*/
+    function quickSort(arr, left = 0, right = arr.length - 1){
+      // 这里有个问题，变量不能用let声明
+      var len = arr.length,
+      partitionIndex,
+      left = typeof left !== "number" ? 0 : left,
+      right = typeof right !== "number" ? len - 1 : right;
+      if(left < right){
+        partitionIndex = partition(arr, left, right);
+        quickSort(arr, left, partitionIndex - 1);
+        quickSort(arr,partitionIndex + 1, right);
+      }
+      return arr;
+    }
+    // 最后的返回结果就是左侧都比标志位小，右边都比标志位大
+    function partition(arr, left, right){
+      let pivot = left;     // 标志位
+      let index = pivot + 1;
+      for(let i = index; i <= right; i++){
+          if(arr[i] < arr[pivot]){
+              [arr[index] , arr[i]] = [arr[i] , arr[index]]
+              index ++;
+          }
+      }
+      [arr[pivot], arr[index - 1]] = [arr[index - 1], arr[pivot]];
+      return index - 1;
+    }
+
+  </script>
+</body>
+</html>
